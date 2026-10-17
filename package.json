@@ -1,0 +1,15 @@
+{
+  "name": "explain-monero-error",
+  "version": "1.0.0",
+  "description": "Searchable error dictionary, visual flowcharts, and zero-dependency CLI troubleshooter for Monero wallet, daemon (monerod), and RPC errors.",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "explain-monero-error": "./scripts/explain.mjs"
+  },
+  "scripts": {
+    "test": "node scripts/validate.mjs",
+    "validate": "node scripts/validate.mjs",
+    "explain": "node scripts/explain.mjs"
+  }
+}

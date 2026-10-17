@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Explain Monero Error — Interactive Troubleshooter</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #30363d;
+      --text: #f0f6fc;
+      --muted: #8b949e;
+      --accent: #ff6600;
+      --green: #3fb950;
+      --blue: #58a6ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 40px 20px 64px;
+    }
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 28px;
+    }
+    .kicker {
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 6px 0 8px;
+      font-size: 30px;
+    }
+    .subtitle {
+      color: var(--muted);
+      margin: 0;
+      font-size: 16px;
+    }
+    .search-box {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 16px;
+      color: var(--text);
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      outline: none;
+      margin-bottom: 16px;
+    }
+    .search-box:focus {
+      border-color: var(--accent);
+    }
+    .safety-banner {
+      background: #102418;
+      border: 1px solid #238636;
+      color: #aff5b4;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      margin-bottom: 24px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 19px;
+    }
+    .badge {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 99px;
+      background: #0d1117;
+      border: 1px solid var(--border);
+      color: var(--accent);
+    }
+    .safe-pill {
+      display: inline-block;
+      font-size: 13px;
+      color: var(--green);
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .strings {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 10px 0 14px;
+    }
+    .strings code {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 5px;
+      font-size: 12px;
+      color: #c9d1d9;
+    }
+    ol {
+      margin: 8px 0 12px;
+      padding-left: 20px;
+    }
+    li {
+      margin-bottom: 6px;
+    }
+    a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="kicker">Local Diagnostic Reference</div>
+      <h1>Explain Monero Error</h1>
+      <p class="subtitle">Paste a wallet, daemon, or RPC error message below to see why it happens and how to fix it.</p>
+    </header>
+
+    <input
+      id="search"
+      class="search-box"
+      type="search"
+      placeholder="e.g. not enough unlocked money, daemon returned status: busy, 0.000000000000, SW=0x6985..."
+      autofocus
+    />
+
+    <div class="safety-banner">
+      <strong>Security reminder:</strong> Never enter a 12, 13, 16, 24, or 25-word recovery phrase into any troubleshooting tool or support chat.
+    </div>
+
+    <div id="results"></div>
+  </div>
+
+  <script>
+    const ERRORS = [
+      {
+        id: "not-enough-unlocked-money",
+        category: "balance-and-restore",
+        title: "Not enough unlocked money (10-Block Change Output Lock)",
+        exact_strings: ["not enough unlocked money", "Unlocked balance: 0.000000000000", "wait 10 blocks"],
+        funds_at_risk: "No — your funds are in your wallet and unlock automatically at 10 confirmations.",
+        root_cause: "Spending from an existing Monero output consumes the whole output and returns the remainder as a new change output locked for 10 blocks (~20 minutes).",
+        fix_steps: [
+          "Wait until your previous transaction reaches 10 confirmations (~20 minutes).",
+          "Split your balance into 2–3 separate outputs if you need to send back-to-back payments without waiting."
+        ],
+        guide_url: "https://monkstash.com/monero-wallet-not-showing-balance"
+      },
+      {
+        id: "balance-zero-after-restore",
+        category: "balance-and-restore",
+        title: "Balance shows 0.000000000000 after restoring a wallet",
+        exact_strings: ["0.000000000000", "missing balance after restore", "no transactions found"],
+        funds_at_risk: "No — on-chain outputs never disappear; the scanner skipped those blocks or derived a different address.",
+        root_cause: "Caused by incomplete sync, a Restore Height set higher than your first deposit block, or restoring a 13-word MyMonero / 12-word Exodus seed in a wallet that uses different key derivation.",
+        fix_steps: [
+          "Confirm sync is at 100% and compare your 4... primary address with your original wallet.",
+          "Lower the Restore Height to a block prior to your first transaction and rescan.",
+          "For 13-word MyMonero or 12-word Exodus phrases, use MonkStash's native restore."
+        ],
+        guide_url: "https://monkstash.com/monero-wallet-not-showing-balance"
+      },
+      {
+        id: "no-connection-to-daemon",
+        category: "node-and-network",
+        title: "No connection to daemon / Daemon failed to start",
+        exact_strings: ["no connection to daemon", "Daemon failed to start", "Couldn't connect to daemon"],
+        funds_at_risk: "No — your wallet simply has no active connection to a Monero node.",
+        root_cause: "Local monerod is stopped/quarantined, or the configured remote RPC node is offline or unreachable.",
+        fix_steps: [
+          "Switch to a responsive Mainnet/Stagenet remote node on port 18089 or 443.",
+          "If using a local node, check if antivirus quarantined monerod.exe or if data.mdb is locked."
+        ],
+        guide_url: "https://monkstash.com/monero-wallet-not-connecting"
+      },
+      {
+        id: "double-spend-key-image-spent",
+        category: "transactions",
+        title: "Transaction rejected: double spend / key image already spent",
+        exact_strings: ["double spend", "key image already spent", "tx_verification_failed"],
+        funds_at_risk: "No — prevents spending an output that was already spent or is sitting in the mempool.",
+        root_cause: "Your local wallet cache is out of sync with outputs spent from another device, or an earlier unconfirmed tx is still in the mempool.",
+        fix_steps: [
+          "Run rescan_spent ('Rescan spent outputs') in your wallet settings.",
+          "If using the same wallet on two devices, run a full cache rescan (rescan_bc)."
+        ],
+        guide_url: "https://monkstash.com/send-monero"
+      },
+      {
+        id: "sanity-check-failed-high-fee",
+        category: "transactions",
+        title: "Sanity check failed on high fee",
+        exact_strings: ["Sanity check failed on high fee", "fee is too high"],
+        funds_at_risk: "No — the wallet blocked the transaction to protect you from overpaying fees.",
+        root_cause: "The remote node returned an abnormally high fee estimate.",
+        fix_steps: [
+          "Switch to a different remote node or your own node immediately.",
+          "Verify normal fee levels with the MonkStash Monero Fee Calculator."
+        ],
+        guide_url: "https://monkstash.com/monero-transaction-fee"
+      },
+      {
+        id: "mdb-corrupted-database",
+        category: "database-and-files",
+        title: "MDB_CORRUPTED / Failed to query m_blocks",
+        exact_strings: ["MDB_CORRUPTED", "Located page was wrong type", "Failed to query m_blocks"],
+        funds_at_risk: "No — .bitmonero/lmdb holds public blockchain data, not your wallet keys.",
+        root_cause: "An unclean power-off or crash interrupted an LMDB write.",
+        fix_steps: [
+          "Run 'monerod --db-salvage' first.",
+          "If salvage fails, remove data.mdb and resync with --prune-blockchain and db-sync-mode=safe."
+        ],
+        guide_url: "https://monkstash.com/monero-pruned-node"
+      }
+    ];
+
+    const resultsEl = document.getElementById("results");
+    const searchEl = document.getElementById("search");
+
+    function render(items) {
+      resultsEl.innerHTML = items.map((item) => `
+        <div class="card">
+          <div class="card-header">
+            <h2>${item.title}</h2>
+            <span class="badge">${item.category}</span>
+          </div>
+          <div class="safe-pill">✓ Funds at risk: ${item.funds_at_risk}</div>
+          <div class="strings">
+            ${item.exact_strings.map((s) => `<code>${s}</code>`).join("")}
+          </div>
+          <p><strong>Why it happens:</strong> ${item.root_cause}</p>
+          <strong>How to fix it:</strong>
+          <ol>
+            ${item.fix_steps.map((s) => `<li>${s}</li>`).join("")}
+          </ol>
+          <a href="${item.guide_url}" target="_blank" rel="noopener">Read full troubleshooting guide →</a>
+        </div>
+      `).join("");
+    }
+
+    searchEl.addEventListener("input", () => {
+      const q = searchEl.value.trim().toLowerCase();
+      if (!q) {
+        render(ERRORS);
+        return;
+      }
+      const filtered = ERRORS.filter((e) =>
+        [e.id, e.title, e.category, e.root_cause, ...e.exact_strings, ...e.fix_steps]
+          .join(" ")
+          .toLowerCase()
+          .includes(q)
+      );
+      render(filtered);
+    });
+
+    render(ERRORS);
+  </script>
+</body>
+</html>

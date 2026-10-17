@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 380" width="100%" height="auto" role="img" aria-label="Missing Monero Balance Diagnostic Flowchart">
+  <rect width="1200" height="380" rx="14" fill="#0d1117" stroke="#30363d" stroke-width="2"/>
+
+  <text x="36" y="42" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="20" font-weight="800" fill="#f0f6fc">Diagnostic Flowchart: &quot;My Monero Balance Shows 0.000000000000&quot;</text>
+  <text x="36" y="66" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13.5" fill="#8b949e">Check these 4 deterministic causes in order—never share your seed phrase with anyone offering &quot;support&quot;</text>
+
+  <g transform="translate(36, 96)" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
+    <!-- Check 1 -->
+    <rect x="0" y="0" width="266" height="248" rx="10" fill="#161b22" stroke="#58a6ff" stroke-width="1.5"/>
+    <rect x="0" y="0" width="266" height="36" rx="10" fill="#101f33"/>
+    <text x="16" y="23" font-family="system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#58a6ff">Check 1: Is Sync at 100%?</text>
+    <text x="16" y="60" font-size="11.5" fill="#c9d1d9">Monero cannot know your balance</text>
+    <text x="16" y="78" font-size="11.5" fill="#c9d1d9">until your wallet scans the exact</text>
+    <text x="16" y="96" font-size="11.5" fill="#c9d1d9">blocks where you received funds.</text>
+    <rect x="16" y="122" width="234" height="108" rx="6" fill="#0d1117" stroke="#30363d"/>
+    <text x="26" y="144" font-size="11.5" fill="#3fb950" font-weight="700">Fix:</text>
+    <text x="26" y="164" font-size="11" fill="#c9d1d9">• Verify daemon height matches</text>
+    <text x="26" y="182" font-size="11" fill="#c9d1d9">  current network tip (~3.26M+).</text>
+    <text x="26" y="200" font-size="11" fill="#c9d1d9">• Switch to a healthy remote</text>
+    <text x="26" y="218" font-size="11" fill="#c9d1d9">  node if stuck on 0 blocks.</text>
+
+    <!-- Check 2 -->
+    <rect x="287" y="0" width="266" height="248" rx="10" fill="#161b22" stroke="#ff6600" stroke-width="1.5"/>
+    <rect x="287" y="0" width="266" height="36" rx="10" fill="#24160e"/>
+    <text x="303" y="23" font-family="system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#ff6600">Check 2: Restore Height Too High?</text>
+    <text x="303" y="60" font-size="11.5" fill="#c9d1d9">If Restore Height is higher than</text>
+    <text x="303" y="78" font-size="11.5" fill="#c9d1d9">the block of your deposit, the</text>
+    <text x="303" y="96" font-size="11.5" fill="#c9d1d9">scanner skips right past your XMR.</text>
+    <rect x="303" y="122" width="234" height="108" rx="6" fill="#0d1117" stroke="#30363d"/>
+    <text x="313" y="144" font-size="11.5" fill="#3fb950" font-weight="700">Fix:</text>
+    <text x="313" y="164" font-size="11" fill="#c9d1d9">• Set Restore Height to a block</text>
+    <text x="313" y="182" font-size="11" fill="#c9d1d9">  BEFORE your first transaction.</text>
+    <text x="313" y="200" font-size="11" fill="#c9d1d9">• Run rescan_bc / Rescan Wallet</text>
+    <text x="313" y="218" font-size="11" fill="#c9d1d9">  from the lower height.</text>
+
+    <!-- Check 3 -->
+    <rect x="574" y="0" width="266" height="248" rx="10" fill="#161b22" stroke="#d29922" stroke-width="1.5"/>
+    <rect x="574" y="0" width="266" height="36" rx="10" fill="#261d0f"/>
+    <text x="590" y="23" font-family="system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#d29922">Check 3: Wrong Seed Format?</text>
+    <text x="590" y="60" font-size="11.5" fill="#c9d1d9">13-word MyMonero and 12-word</text>
+    <text x="590" y="78" font-size="11.5" fill="#c9d1d9">Exodus vs Ledger BIP-39 phrases</text>
+    <text x="590" y="96" font-size="11.5" fill="#c9d1d9">derive different primary addresses.</text>
+    <rect x="590" y="122" width="234" height="108" rx="6" fill="#0d1117" stroke="#30363d"/>
+    <text x="600" y="144" font-size="11.5" fill="#3fb950" font-weight="700">Fix:</text>
+    <text x="600" y="164" font-size="11" fill="#c9d1d9">• Compare your 4... primary</text>
+    <text x="600" y="182" font-size="11" fill="#c9d1d9">  address against your old wallet.</text>
+    <text x="600" y="200" font-size="11" fill="#c9d1d9">• Use native MyMonero / Exodus</text>
+    <text x="600" y="218" font-size="11" fill="#c9d1d9">  restore (e.g. in MonkStash).</text>
+
+    <!-- Check 4 -->
+    <rect x="861" y="0" width="266" height="248" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="1.5"/>
+    <rect x="861" y="0" width="266" height="36" rx="10" fill="#102418"/>
+    <text x="877" y="23" font-family="system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#3fb950">Check 4: Stale Wallet Cache?</text>
+    <text x="877" y="60" font-size="11.5" fill="#c9d1d9">If height &amp; address are right,</text>
+    <text x="877" y="78" font-size="11.5" fill="#c9d1d9">the local wallet cache file may</text>
+    <text x="877" y="96" font-size="11.5" fill="#c9d1d9">have missed outputs during sync.</text>
+    <rect x="877" y="122" width="234" height="108" rx="6" fill="#0d1117" stroke="#30363d"/>
+    <text x="887" y="144" font-size="11.5" fill="#3fb950" font-weight="700">Fix:</text>
+    <text x="887" y="164" font-size="11" fill="#c9d1d9">• Run rescan_spent / Rescan</text>
+    <text x="887" y="182" font-size="11" fill="#c9d1d9">  Wallet Cache in Settings.</text>
+    <text x="887" y="200" font-size="11" fill="#c9d1d9">• Keep &lt;wallet&gt;.keys, rename</text>
+    <text x="887" y="218" font-size="11" fill="#c9d1d9">  &lt;wallet&gt; cache file &amp; reopen.</text>
+  </g>
+</svg>

@@ -1,0 +1,347 @@
+{
+  "schema_version": "1.0.0",
+  "last_verified": "2026-10-17",
+  "errors": [
+    {
+      "id": "not-enough-unlocked-money",
+      "category": "balance-and-restore",
+      "title": "Not enough unlocked money (10-Block Change Output Lock)",
+      "exact_strings": [
+        "not enough unlocked money",
+        "not enough money to spend",
+        "Unlocked balance: 0.000000000000",
+        "balance is locked",
+        "wait 10 blocks"
+      ],
+      "funds_at_risk": "No — your funds are in your wallet and will unlock automatically.",
+      "root_cause": "Monero transactions consume an entire existing output (like paying for a $5 coffee with a $100 bill) and return the remainder to your wallet as a brand-new change output. Consensus rules lock both newly received outputs and change outputs for 10 blocks (~20 minutes) to protect ring signatures against shallow chain reorganizations.",
+      "fix_steps": [
+        "Wait until your most recent transaction reaches 10 confirmations (~20 minutes on average).",
+        "If you frequently send back-to-back payments, split your balance into 3–5 separate outputs (by sending sub-amounts to your own address) so one output remains unlocked while another is waiting for change.",
+        "Check your wallet's Coins / Outputs tab (in Feather or Monero GUI) to inspect individual output amounts and their confirmation counts."
+      ],
+      "guide_url": "https://monkstash.com/monero-wallet-not-showing-balance"
+    },
+    {
+      "id": "balance-zero-after-restore",
+      "category": "balance-and-restore",
+      "title": "Balance shows 0.000000000000 after restoring a wallet",
+      "exact_strings": [
+        "balance is 0 after restore",
+        "0.000000000000",
+        "missing balance after restore",
+        "restored wallet shows zero",
+        "no transactions found after restore"
+      ],
+      "funds_at_risk": "No — on-chain outputs never disappear; the scanner either skipped those blocks or derived a different address.",
+      "root_cause": "Almost always caused by one of three things: (1) Wallet sync is not yet at 100%, (2) the Restore Height was set higher than the block where you received funds, or (3) a non-standard seed format (13-word MyMonero or 12-word Exodus vs. Ledger BIP-39) derived a different primary 4... address.",
+      "fix_steps": [
+        "Verify the wallet shows 100% synchronized against a node at the current network tip.",
+        "Compare the restored wallet's Primary Address (starts with 4...) against the address you actually sent funds to.",
+        "Lower the Restore Height to a block number or date prior to your first deposit (use https://monkstash.com/tools/monero-restore-height-calculator) and trigger a full rescan (rescan_bc).",
+        "If restoring a 13-word MyMonero or 12-word Exodus phrase, use a wallet with native derivation support such as MonkStash."
+      ],
+      "guide_url": "https://monkstash.com/monero-wallet-not-showing-balance"
+    },
+    {
+      "id": "restore-height-in-future",
+      "category": "balance-and-restore",
+      "title": "Restore height is higher than the current blockchain height",
+      "exact_strings": [
+        "restore height is higher than",
+        "restore height in the future",
+        "invalid restore height",
+        "refresh_from_block_height"
+      ],
+      "funds_at_risk": "No — lowering the restore height resolves this immediately.",
+      "root_cause": "A block height or YYYY-MM-DD date was entered incorrectly (for example, entering a Unix timestamp instead of a block number, or entering a future date), causing the wallet scanner to start beyond the chain tip.",
+      "fix_steps": [
+        "Look up the exact Monero block height for your wallet creation date using the MonkStash Restore Height Calculator.",
+        "Update the Wallet Restore Height in Settings -> Info (or set_refresh_from_block_height in CLI) and rescan."
+      ],
+      "guide_url": "https://monkstash.com/monero-restore-height"
+    },
+    {
+      "id": "mymonero-13-word-mismatch",
+      "category": "balance-and-restore",
+      "title": "13-word MyMonero seed rejected or derives wrong address",
+      "exact_strings": [
+        "Electrum-style word list failed verification",
+        "13 words",
+        "MyMonero seed not working",
+        "wrong address from 13 word seed"
+      ],
+      "funds_at_risk": "No — your 13-word phrase still holds your keys, but requires MyMonero's dual-Keccak derivation.",
+      "root_cause": "MyMonero (discontinued January 2026) used a 16-byte (128-bit) seed encoded as 13 Monero words and derived the private view key by hashing the unreduced first Keccak-256 digest: sc_reduce32(keccak256(keccak256(seed16))). Standard 25-word wallets either reject 13 words outright or hash the reduced spend key, yielding the wrong view key and address whenever the first hash exceeds the Ed25519 group order l.",
+      "fix_steps": [
+        "Restore the 13-word phrase directly in MonkStash (https://monkstash.com/restore-mymonero-seed), which runs MyMonero's exact unreduced-hash derivation in your browser.",
+        "Alternatively, extract the raw 64-character hex Primary Address, Private Spend Key, and Private View Key and use 'Restore from Keys' in Monero GUI/CLI or Feather."
+      ],
+      "guide_url": "https://monkstash.com/restore-mymonero-seed"
+    },
+    {
+      "id": "exodus-12-word-bip39-mismatch",
+      "category": "balance-and-restore",
+      "title": "12-word Exodus phrase rejected or derives empty Monero wallet",
+      "exact_strings": [
+        "12 word seed monero",
+        "Exodus monero seed",
+        "BIP39 seed shows zero balance",
+        "word not in Monero dictionary"
+      ],
+      "funds_at_risk": "No — your funds are intact at BIP-32 path m/44'/128'/0'/0/0.",
+      "root_cause": "Exodus (which ended Monero support in August 2025) used a 12-word BIP-39 phrase and derived the Monero spend key via BIP-32 path m/44'/128'/0'/0/0 followed by direct sc_reduce32 (without hashing the node key with Keccak-256 first). Wallets that expect 25 Monero words or use Ledger/Coinomi-style Keccak BIP-39 derivation will derive a completely different address.",
+      "fix_steps": [
+        "Restore the 12-word Exodus phrase directly in MonkStash (https://monkstash.com/exodus-monero) or choose 'BIP39 (Exodus style)' in Cake Wallet.",
+        "Set the restore height to the date you first used Monero in Exodus so the scanner finds your historical outputs."
+      ],
+      "guide_url": "https://monkstash.com/exodus-monero"
+    },
+    {
+      "id": "no-connection-to-daemon",
+      "category": "node-and-network",
+      "title": "No connection to daemon / Daemon failed to start",
+      "exact_strings": [
+        "no connection to daemon",
+        "Daemon failed to start",
+        "Please check your wallet and daemon log for errors",
+        "Error: Couldn't connect to daemon",
+        " disconnected"
+      ],
+      "funds_at_risk": "No — your wallet simply has no active connection to a Monero RPC node.",
+      "root_cause": "Either your local monerod process is not running (blocked by firewall/antivirus or crashed on a corrupted LMDB lock), or the remote RPC node you configured is offline, unreachable on that port, or blocked by a corporate/ISP firewall.",
+      "fix_steps": [
+        "If using a remote node, switch to a verified Mainnet or Stagenet RPC endpoint (typically on port 18089 or 443 HTTPS).",
+        "If connecting from a browser wallet over HTTPS, ensure the node supports HTTPS and returns Access-Control-Allow-Origin headers.",
+        "If running a local node on Windows/macOS, check if antivirus quarantined monerod and verify port 18081 is not bound by a stuck background process."
+      ],
+      "guide_url": "https://monkstash.com/monero-wallet-not-connecting"
+    },
+    {
+      "id": "daemon-returned-status-busy",
+      "category": "node-and-network",
+      "title": "Daemon returned status: busy / core is busy",
+      "exact_strings": [
+        "daemon returned status: busy",
+        "CORE_BUSY",
+        "Core is busy",
+        "daemon is busy"
+      ],
+      "funds_at_risk": "No — the node is temporarily syncing a block batch or overloaded.",
+      "root_cause": "monerod returns CORE_BUSY when it is in the middle of synchronizing blocks with peers, flushing LMDB to disk, or handling too many concurrent restricted-RPC requests on a public node.",
+      "fix_steps": [
+        "Wait 30–60 seconds and retry if your local node is finishing its sync tip.",
+        "If using a public remote node, switch to another public node with lower load or run your own pruned node."
+      ],
+      "guide_url": "https://monkstash.com/monero-wallet-not-syncing"
+    },
+    {
+      "id": "ssl-or-cors-rpc-failure",
+      "category": "node-and-network",
+      "title": "SSL handshake failed / Browser CORS or Mixed Content RPC error",
+      "exact_strings": [
+        "SSL handshake failed",
+        "Failed to fetch",
+        "Blocked loading mixed active content",
+        "Access-Control-Allow-Origin",
+        "ERR_CERT_AUTHORITY_INVALID"
+      ],
+      "funds_at_risk": "No — this is a transport security check between the wallet and the node.",
+      "root_cause": "Web browsers block HTTPS pages from querying plain http:// remote nodes (Mixed Content) and require the node to respond with Access-Control-Allow-Origin CORS headers. On desktop wallets, connecting with SSL enabled to a plain-HTTP port (or vice versa) causes an SSL handshake failure.",
+      "fix_steps": [
+        "For browser wallets (like MonkStash), use an https:// node with CORS enabled, or http://127.0.0.1:18089 if the node runs on the same machine.",
+        "If self-hosting monerod for a browser wallet, put Caddy in front of port 18089 with automatic TLS and Access-Control-Allow-Origin: *.",
+        "In desktop wallets, verify whether the port expects TLS (usually 443 or 18089) or plain HTTP."
+      ],
+      "guide_url": "https://monkstash.com/monero-wallet-not-connecting"
+    },
+    {
+      "id": "double-spend-key-image-spent",
+      "category": "transactions",
+      "title": "Transaction rejected: double spend / key image already spent",
+      "exact_strings": [
+        "double spend",
+        "key image already spent",
+        "tx_verification_failed",
+        "kept_by_block=false",
+        "output already spent"
+      ],
+      "funds_at_risk": "No — prevents broadcasting an input that was already spent or is already in the mempool.",
+      "root_cause": "Every Monero output has a deterministic cryptographic Key Image. This error occurs when (1) your wallet's local cache is out of sync and tries to spend an output you already spent from another device/wallet instance, or (2) a previous transaction using that same input is still sitting in the node's mempool.",
+      "fix_steps": [
+        "Run 'Rescan spent outputs' (rescan_spent in CLI) so your wallet marks already-spent outputs accurately.",
+        "If you use the same seed phrase on two devices simultaneously, run a full cache rescan (rescan_bc) on the stale device.",
+        "If a previous transaction is stuck in the mempool of a single node, flush_txpool on your node or wait for it to confirm/drop."
+      ],
+      "guide_url": "https://monkstash.com/send-monero"
+    },
+    {
+      "id": "sanity-check-failed-high-fee",
+      "category": "transactions",
+      "title": "Sanity check failed on high fee",
+      "exact_strings": [
+        "Sanity check failed on high fee",
+        "fee is too high",
+        " unreasonable fee"
+      ],
+      "funds_at_risk": "No — the wallet aborted transaction construction to protect you from overpaying fees.",
+      "root_cause": "The remote node returned an abnormally high fee estimate (either due to a misconfigured/malicious remote node attempting a fee-estimation attack, or extreme mempool congestion combined with a high fee multiplier).",
+      "fix_steps": [
+        "Disconnect immediately from the current remote node and switch to a trusted node or your own node.",
+        "Set your transaction fee priority to Normal / Automatic rather than a manual high multiplier.",
+        "Compare the quoted fee against live network medians using the MonkStash Monero Fee Calculator (https://monkstash.com/tools/monero-fee-calculator)."
+      ],
+      "guide_url": "https://monkstash.com/monero-transaction-fee"
+    },
+    {
+      "id": "not-enough-money-for-fee",
+      "category": "transactions",
+      "title": "Not enough money to cover transaction fee when sending max balance",
+      "exact_strings": [
+        "not enough money",
+        "needed",
+        "cannot subtract fee from amount"
+      ],
+      "funds_at_risk": "No — you just need to deduct the network fee (~0.00003–0.0001 XMR) or use Sweep All.",
+      "root_cause": "When typing your exact total wallet balance into the Amount field, the wallet must still add the network transaction fee on top unless you use the dedicated 'Max / Sweep All' mode.",
+      "fix_steps": [
+        "Click the 'Max' button (or use sweep_all in CLI) so the wallet automatically subtracts the exact network fee from the total amount sent.",
+        "If you have dozens of tiny dust inputs, sweeping them requires a slightly larger transaction size and fee."
+      ],
+      "guide_url": "https://monkstash.com/monero-transaction-fee"
+    },
+    {
+      "id": "tx-extra-invalid-format",
+      "category": "transactions",
+      "title": "tx_extra has invalid format / Payment ID deprecated",
+      "exact_strings": [
+        "tx_extra has invalid format",
+        "Standalone payment IDs are obsolete",
+        "long payment ID",
+        "unencrypted payment ID"
+      ],
+      "funds_at_risk": "No — the transaction was rejected before broadcast.",
+      "root_cause": "Standalone 64-character unencrypted payment IDs were removed from Monero consensus in November 2019 (v0.15) because they harmed privacy and bloated tx_extra. Modern Monero uses Subaddresses (starting with 8...) instead.",
+      "fix_steps": [
+        "Do not attach a manual Payment ID; ask the recipient or exchange for a modern Subaddress (starts with 8...) or Integrated Address.",
+        "Update any legacy merchant integration still generating tx_payment_id parameters in monero: URIs."
+      ],
+      "guide_url": "https://monkstash.com/monero-subaddress"
+    },
+    {
+      "id": "transaction-stuck-pending",
+      "category": "transactions",
+      "title": "Transaction stuck in Pending (0 confirmations) for hours",
+      "exact_strings": [
+        "Pending",
+        "0/10 confirmations",
+        "in txpool",
+        "waiting for confirmation"
+      ],
+      "funds_at_risk": "No — if a transaction never confirms, the inputs remain in your wallet.",
+      "root_cause": "Usually happens when the remote node you used to broadcast the transaction was out of sync, isolated from the P2P network, or dropped the transaction from its local mempool without relaying it to miners.",
+      "fix_steps": [
+        "Copy the Transaction ID (txid) and check it on a public block explorer or another node (see https://monkstash.com/monero-transaction-lookup).",
+        "If the txid is not found on the network, switch your wallet to a fully synced node and run rescan_spent (or reopen the wallet) so the unbroadcast pending state clears."
+      ],
+      "guide_url": "https://monkstash.com/monero-transaction-time"
+    },
+    {
+      "id": "failed-to-lock-lmdb",
+      "category": "database-and-files",
+      "title": "Failed to lock lmdb / data.mdb is already in use",
+      "exact_strings": [
+        "Failed to lock",
+        "data.mdb",
+        "Resource temporarily unavailable",
+        "Failed to open db handle"
+      ],
+      "funds_at_risk": "No — another monerod instance already holds the lock on the blockchain database.",
+      "root_cause": "Only one monerod process can open the LMDB blockchain directory (.bitmonero/lmdb) with write access at a time. A previous monerod process is still running in the background or still flushing pages to disk.",
+      "fix_steps": [
+        "Wait 30–60 seconds if you just closed the Monero GUI or stopped Docker (monerod flushes LMDB before exiting).",
+        "Check running processes (ps aux | grep monerod or Task Manager on Windows) and gracefully stop the existing monerod instance before starting a new one."
+      ],
+      "guide_url": "https://monkstash.com/run-a-monero-node"
+    },
+    {
+      "id": "mdb-corrupted-database",
+      "category": "database-and-files",
+      "title": "MDB_CORRUPTED / Bus error / Failed to query m_blocks",
+      "exact_strings": [
+        "MDB_CORRUPTED",
+        "Located page was wrong type",
+        "Failed to query m_blocks",
+        "MDB_BAD_TXN",
+        "Bus error"
+      ],
+      "funds_at_risk": "No — blockchain data in .bitmonero/lmdb is public chain data, not your wallet keys.",
+      "root_cause": "An abrupt power loss, hard reboot, OOM kill, or failing disk interrupted an LMDB write while monerod was running in fast/async sync mode.",
+      "fix_steps": [
+        "First try running: monerod --db-salvage",
+        "If salvage fails, delete .bitmonero/lmdb/data.mdb and resync (using --prune-blockchain to cut the download size to ~95 GB).",
+        "Use db-sync-mode=safe in monerod.conf and give Docker containers stop_grace_period: 2m to prevent future unclean shutdowns."
+      ],
+      "guide_url": "https://monkstash.com/monero-pruned-node"
+    },
+    {
+      "id": "wallet-cache-corrupted-or-invalid-password",
+      "category": "database-and-files",
+      "title": "Couldn't open wallet: Invalid password (when password is correct)",
+      "exact_strings": [
+        "invalid password",
+        "failed to load wallet",
+        "std::bad_alloc",
+        "boost::archive::archive_exception"
+      ],
+      "funds_at_risk": "No — as long as your <wallet>.keys file or 25-word seed phrase is intact.",
+      "root_cause": "Monero desktop wallets store two files per wallet: '<wallet>.keys' (your encrypted private keys and settings) and '<wallet>' (no extension — the local transaction cache). If the wallet crashes while saving the cache file, reopening it can throw a misleading 'Invalid password' or archive exception.",
+      "fix_steps": [
+        "Close the wallet application.",
+        "In your wallet folder, DO NOT delete '<wallet>.keys'. Rename the extensionless '<wallet>' cache file to '<wallet>.old'.",
+        "Reopen the wallet with your password; it will recreate a clean cache file from '<wallet>.keys' and rescan."
+      ],
+      "guide_url": "https://monkstash.com/restore-monero-wallet"
+    },
+    {
+      "id": "antivirus-false-positive-quarantine",
+      "category": "os-and-hardware",
+      "title": "Windows Defender / Antivirus deleted monerod.exe or monero-wallet-gui.exe",
+      "exact_strings": [
+        "Trojan:Win32/CoinMiner",
+        "PUA:Win32/CoinMiner",
+        "monerod.exe is missing",
+        "Operation did not complete successfully because the file contains a virus"
+      ],
+      "funds_at_risk": "No — your wallet files live in your Documents/Monero/wallets folder, separate from the application binary.",
+      "root_cause": "The official Monero GUI and CLI bundle monerod, which includes built-in solo CPU mining code. Antivirus heuristics flag any binary containing RandomX mining routines as 'PUA:CoinMiner' even when downloaded legitimately from getmonero.org.",
+      "fix_steps": [
+        "Always verify the SHA-256 hash and GPG signature of the downloaded archive against getmonero.org/downloads/hashes.txt.",
+        "Add your Monero installation folder to your Windows Security / Antivirus exclusions list and restore monerod.exe from Protection History.",
+        "Alternatively, use a self-custodial browser wallet like MonkStash (https://monkstash.com) that runs in WebAssembly with nothing to install on disk."
+      ],
+      "guide_url": "https://monkstash.com/monero-gui-virus-warning"
+    },
+    {
+      "id": "ledger-hardware-status-word",
+      "category": "os-and-hardware",
+      "title": "Ledger hardware wallet error: SW=0x6985 / SW=0x6e00 / Wrong Device Status",
+      "exact_strings": [
+        "SW=0x6985",
+        "SW=0x6e00",
+        "SW=0x6d00",
+        "Wrong Device Status",
+        "Unable to open device",
+        "wrong client version"
+      ],
+      "funds_at_risk": "No — your keys remain inside the Ledger Secure Element.",
+      "root_cause": "SW=0x6985 means 'Condition of use not satisfied' (you rejected a prompt on the Ledger screen or it timed out). SW=0x6e00 / 0x6d00 means the Monero app is not open on the Ledger (or Ledger Live is holding exclusive USB access). 'Wrong client version' means the Ledger Monero app version and your desktop wallet version are out of sync.",
+      "fix_steps": [
+        "Close Ledger Live completely (it locks the USB HID interface).",
+        "Unlock the Ledger device, open the Monero app so it displays 'Ready', and approve the 'Export View Key' prompt on the hardware screen.",
+        "Update both your Ledger Monero app (via Ledger Live) and your Monero wallet software to compatible current releases."
+      ],
+      "guide_url": "https://monkstash.com/monero-wallets/hardware"
+    }
+  ]
+}
