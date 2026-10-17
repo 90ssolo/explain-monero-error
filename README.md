@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="assets/hero-banner.svg" alt="Explain Monero Error — Diagnostic Catalog and CLI" width="100%">
+  <img src="assets/hero-banner.svg" alt="Explain Monero Error - Diagnostic Catalog and CLI" width="100%">
 </p>
 
 # Explain Monero Error
 
-Monero's daemon (`monerod`), RPC server (`monero-wallet-rpc`), and wallets (Monero GUI/CLI, Feather, Cake Wallet, and browser wallets) often surface cryptic error messages—such as `not enough unlocked money`, `double spend`, `Sanity check failed on high fee`, `MDB_CORRUPTED`, or a `0.000000000000` balance after restoring from a recovery phrase.
+Monero's daemon (`monerod`), RPC server (`monero-wallet-rpc`), and wallets (Monero GUI/CLI, Feather, Cake Wallet, and browser wallets) often surface cryptic error messages - such as `not enough unlocked money`, `double spend`, `Sanity check failed on high fee`, `MDB_CORRUPTED`, or a `0.000000000000` balance after restoring from a recovery phrase.
 
 This repository provides:
 1. **A structured JSON error catalog** ([`data/errors.json`](data/errors.json)) covering 18 common Monero wallet and node errors, what causes each one, whether funds are at risk, and step-by-step fixes.
@@ -25,7 +25,7 @@ The most common panic for new Monero users happens right after sending a small t
 
 ### How to fix or prevent it
 - **Wait ~20 minutes (10 blocks):** Your change output unlocks automatically once the transaction reaches 10 confirmations.
-- **Pre-split your outputs:** If you need to send multiple transactions in a row without waiting 20 minutes between them, keep 2–4 separate outputs in your wallet so spending one leaves the others unlocked.
+- **Pre-split your outputs:** If you need to send multiple transactions in a row without waiting 20 minutes between them, keep 2-4 separate outputs in your wallet so spending one leaves the others unlocked.
 
 ---
 
@@ -70,7 +70,7 @@ For step-by-step instructions by symptom:
 
 ## Using the CLI Troubleshooter
 
-No `npm install` is required—the CLI uses only built-in Node.js modules.
+No `npm install` is required - the CLI uses only built-in Node.js modules.
 
 ```bash
 # Explain a specific error string or symptom
@@ -88,7 +88,7 @@ Example output:
 ------------------------------------------------------------
 ERROR      : Not enough unlocked money (10-Block Change Output Lock)
 ID         : not-enough-unlocked-money (balance-and-restore)
-FUNDS SAFE : No — your funds are in your wallet and will unlock automatically.
+FUNDS SAFE : No - your funds are in your wallet and will unlock automatically.
 
 WHY IT HAPPENS:
   Monero transactions consume an entire existing output (like paying for a $5 coffee with a $100 bill)
@@ -98,7 +98,7 @@ WHY IT HAPPENS:
 
 HOW TO FIX IT:
   1. Wait until your most recent transaction reaches 10 confirmations (~20 minutes on average).
-  2. If you frequently send back-to-back payments, split your balance into 3–5 separate outputs...
+  2. If you frequently send back-to-back payments, split your balance into 3-5 separate outputs...
 ------------------------------------------------------------
 ```
 

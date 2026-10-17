@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Explain Monero Error — Interactive Troubleshooter</title>
+  <title>Explain Monero Error - Interactive Troubleshooter</title>
   <style>
     :root {
       --bg: #0d1117;
@@ -166,11 +166,11 @@
         category: "balance-and-restore",
         title: "Not enough unlocked money (10-Block Change Output Lock)",
         exact_strings: ["not enough unlocked money", "Unlocked balance: 0.000000000000", "wait 10 blocks"],
-        funds_at_risk: "No — your funds are in your wallet and unlock automatically at 10 confirmations.",
+        funds_at_risk: "No - your funds are in your wallet and unlock automatically at 10 confirmations.",
         root_cause: "Spending from an existing Monero output consumes the whole output and returns the remainder as a new change output locked for 10 blocks (~20 minutes).",
         fix_steps: [
           "Wait until your previous transaction reaches 10 confirmations (~20 minutes).",
-          "Split your balance into 2–3 separate outputs if you need to send back-to-back payments without waiting."
+          "Split your balance into 2-3 separate outputs if you need to send back-to-back payments without waiting."
         ],
         guide_url: "https://monkstash.com/monero-wallet-not-showing-balance"
       },
@@ -179,7 +179,7 @@
         category: "balance-and-restore",
         title: "Balance shows 0.000000000000 after restoring a wallet",
         exact_strings: ["0.000000000000", "missing balance after restore", "no transactions found"],
-        funds_at_risk: "No — on-chain outputs never disappear; the scanner skipped those blocks or derived a different address.",
+        funds_at_risk: "No - on-chain outputs never disappear; the scanner skipped those blocks or derived a different address.",
         root_cause: "Caused by incomplete sync, a Restore Height set higher than your first deposit block, or restoring a 13-word MyMonero / 12-word Exodus seed in a wallet that uses different key derivation.",
         fix_steps: [
           "Confirm sync is at 100% and compare your 4... primary address with your original wallet.",
@@ -193,7 +193,7 @@
         category: "node-and-network",
         title: "No connection to daemon / Daemon failed to start",
         exact_strings: ["no connection to daemon", "Daemon failed to start", "Couldn't connect to daemon"],
-        funds_at_risk: "No — your wallet simply has no active connection to a Monero node.",
+        funds_at_risk: "No - your wallet simply has no active connection to a Monero node.",
         root_cause: "Local monerod is stopped/quarantined, or the configured remote RPC node is offline or unreachable.",
         fix_steps: [
           "Switch to a responsive Mainnet/Stagenet remote node on port 18089 or 443.",
@@ -206,7 +206,7 @@
         category: "transactions",
         title: "Transaction rejected: double spend / key image already spent",
         exact_strings: ["double spend", "key image already spent", "tx_verification_failed"],
-        funds_at_risk: "No — prevents spending an output that was already spent or is sitting in the mempool.",
+        funds_at_risk: "No - prevents spending an output that was already spent or is sitting in the mempool.",
         root_cause: "Your local wallet cache is out of sync with outputs spent from another device, or an earlier unconfirmed tx is still in the mempool.",
         fix_steps: [
           "Run rescan_spent ('Rescan spent outputs') in your wallet settings.",
@@ -219,7 +219,7 @@
         category: "transactions",
         title: "Sanity check failed on high fee",
         exact_strings: ["Sanity check failed on high fee", "fee is too high"],
-        funds_at_risk: "No — the wallet blocked the transaction to protect you from overpaying fees.",
+        funds_at_risk: "No - the wallet blocked the transaction to protect you from overpaying fees.",
         root_cause: "The remote node returned an abnormally high fee estimate.",
         fix_steps: [
           "Switch to a different remote node or your own node immediately.",
@@ -232,7 +232,7 @@
         category: "database-and-files",
         title: "MDB_CORRUPTED / Failed to query m_blocks",
         exact_strings: ["MDB_CORRUPTED", "Located page was wrong type", "Failed to query m_blocks"],
-        funds_at_risk: "No — .bitmonero/lmdb holds public blockchain data, not your wallet keys.",
+        funds_at_risk: "No - .bitmonero/lmdb holds public blockchain data, not your wallet keys.",
         root_cause: "An unclean power-off or crash interrupted an LMDB write.",
         fix_steps: [
           "Run 'monerod --db-salvage' first.",
